@@ -1,8 +1,58 @@
 import React, { Component } from 'react'
+import { fetchPopularRepos } from '../shared/api' 
 
 export default class Grid extends Component {
+  constructor(props) {
+    super(props)
+
+    let repos
+
+    if(__isBrowser__) {
+      repos = window.__INITIAL_DATA__
+      delete window.__INITIAL_DATA__
+    } else {
+      repos = this.props.staticContext.data
+    }
+
+    this.state = {
+      repos,
+      loading: repos ? false : true
+    }
+
+    this.fetchRepos = this.fetchRepos.bind(this)
+  }
+
+  fetchRepos(lang) {
+    this.setState({ loading: true })
+
+    fetchPopularRepos(lang)
+      .then((repos) => {
+        this.setState({ 
+          repos,
+          loading: false 
+        })
+      })
+  }
+
+  componentDidMount() {
+    if(!this.state.repos) {
+      this.fetchRepos(this.props.match.params.id)
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { match } = this.props
+
+    if(nextProps.match.params.id !== match.params.id) {
+      this.fetchRepos(this.props.match.params.id)
+    }
+  }
   render() {
-    const repos = this.props.data
+    const { repos, loading } = this.state;
+
+    if(loading) {
+      return <h1>LOADING</h1>
+    }
 
     return (
       <ul style={{display: 'flex', 'flexWrap': 'wrap'}}>
