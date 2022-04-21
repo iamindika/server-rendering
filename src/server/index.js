@@ -4,7 +4,7 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import App from '../shared/App'
 import serialize from 'serialize-javascript'
-import { matchPath } from 'react-router-dom'
+import { matchPath, StaticRouter } from 'react-router-dom'
 import routes from '../shared/routes'
 
 const PORT = 3000
@@ -21,8 +21,12 @@ app.get('*', (req, res, next) => {
     : Promise.resolve()
 
   promise.then((data) => {
+    const context = { data }
+
     const markup = renderToString(
-      <App data={data}/>
+      <StaticRouter location={req.url} context={context}>
+        <App />
+      </StaticRouter>
     )
   
     res.send(`
