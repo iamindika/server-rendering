@@ -94,6 +94,10 @@ var _App = __webpack_require__(5);
 
 var _App2 = _interopRequireDefault(_App);
 
+var _serializeJavascript = __webpack_require__(6);
+
+var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var PORT = 3000;
@@ -103,9 +107,11 @@ app.use((0, _cors2.default)());
 app.use(_express2.default.static('public'));
 
 app.get('*', function (req, res, next) {
-  var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: 'Scruffy' }));
+  var name = 'Scruffy';
 
-  res.send('\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <title>SSR with RR</title>\n        <script src=\'/bundle.js\' defer></script>\n      </head>\n      <body>\n        <div id=\'app\'>' + markup + '</div>\n      </body>\n    </html>\n  ');
+  var markup = (0, _server.renderToString)(_react2.default.createElement(_App2.default, { data: name }));
+
+  res.send('\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <title>SSR with RR</title>\n        <script src=\'/bundle.js\' defer></script>\n        <script>\n          window.__INITIAL_DATA__ = ' + (0, _serializeJavascript2.default)(name) + '\n        </script>\n      </head>\n      <body>\n        <div id=\'app\'>' + markup + '</div>\n      </body>\n    </html>\n  ');
 });
 app.listen(PORT, function () {
   console.log('Server is listening on port: ' + PORT);
@@ -180,6 +186,12 @@ var App = function (_Component) {
 }(_react.Component);
 
 exports.default = App;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("serialize-javascript");
 
 /***/ })
 /******/ ]);
